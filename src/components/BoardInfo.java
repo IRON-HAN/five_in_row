@@ -1,6 +1,5 @@
 package components;
 
-import newconn.Client;
 /**
  * @description: 想改MVC模式结果没成功的失败品
  * @author: Pcy
@@ -14,12 +13,6 @@ public class BoardInfo
     public int[][] chessArray; // 记录棋盘状态★
     public Order status; // 先后手状态
 
-    public Order getStatus()
-    { return status; }
-
-    public void setStatus(Order status)
-    { this.status = status; }
-
     public BoardInfo(Order status)
     {
         this.status = status;
@@ -28,5 +21,11 @@ public class BoardInfo
 
     public BoardInfo()
     { chessArray = new int[ROW][COL]; }
+
+    public Order getStatus()
+    { return status; }
+
+    public void setStatus(Order status)
+    { this.status = status; }
 }
 

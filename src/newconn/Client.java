@@ -7,7 +7,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.*;
 import java.net.Socket;
-import java.util.Scanner;
 /**
  * @description:
  * @author: Pcy
@@ -15,6 +14,28 @@ import java.util.Scanner;
  */
 public class Client
 {
+    // 绑定图形界面
+    public MFrame frame;
+    // 每一步下棋时发送的消息的对象
+    public InfoPerStep msgOnClick;
+    // 从服务器接收的下棋坐标
+    // 用来染色
+    public int x;
+    public int y;
+    private Socket socket;
+    // 标识不同的客户端实例
+    private int ID;
+    public Client(int id, Order order) throws IOException
+    {
+        this.ID = id;
+        System.out.println("***链接服务器***");
+        socket = new Socket("localhost", 8888);
+        System.out.println("***链接成功***");
+        System.out.println("ID = " + ID);
+        frame = new MFrame(new BoardInfo(order));
+        frame.setVisible(true);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+    }
 
     public static void main(String[] args)
     {
@@ -31,41 +52,11 @@ public class Client
         }
     }
 
-    private Socket socket;
-    // unused
-    private boolean isPlaying;
-
-    // 标识不同的客户端实例
-    private int ID;
-    // 绑定图形界面
-    public MFrame frame;
-    // 每一步下棋时发送的消息的对象
-    public InfoPerStep msgOnClick;
-    // unused
-    public boolean flag = false;
-
-    // 从服务器接收的下棋坐标
-    // 用来染色
-    public int x;
-    public int y;
-
     public int getID()
     { return ID; }
 
     public void setID(int ID)
     { this.ID = ID; }
-
-    public Client(int id, Order order) throws IOException
-    {
-        this.ID = id;
-        System.out.println("***链接服务器***");
-        socket = new Socket("localhost", 8888);
-        System.out.println("***链接成功***");
-        System.out.println("ID = " + ID);
-        frame = new MFrame(new BoardInfo(order));
-        frame.setVisible(true);
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-    }
 
     public void start() throws IOException
     {
@@ -79,23 +70,26 @@ public class Client
         // 将自己的ID写到服务器
         String sID = String.valueOf(getID());
         pw.println(sID);
-        Scanner sc = new Scanner(System.in);
-        String ensure = "y";
-        // 如果输入Y则才会发送msgOnClick消息
-        while ("y".equalsIgnoreCase(ensure))
+
+        while (true)
         {
             if (msgOnClick != null)
             {
                 oos.writeObject(msgOnClick);
                 oos.flush();
             }
-            // 通过Scanner进行阻塞
-            ensure = sc.nextLine();
-            frame.label.setText("落子之后输入Y继续");
+            try
+            {
+                msgOnClick = null;
+                Thread.sleep(1000);
+            } catch (InterruptedException e)
+            {
+                e.printStackTrace();
+            }
         }
     }
 
-    // 线程主要功能 接收消息
+    // 线程主要功能:接收消息
     private class SeverHandler implements Runnable
     {
         @Override

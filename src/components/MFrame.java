@@ -1,40 +1,32 @@
 package components;
 
-import connect.*;
+import connect.InfoPerStep;
 import newconn.Client;
 
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.*;
 import javax.swing.plaf.FontUIResource;
+import java.awt.*;
+import java.awt.event.*;
 
 public class MFrame extends JFrame
 {
-    public static void main(String[] args)
-    {
-        MFrame demo = new MFrame(new BoardInfo(Order.FIRST));
-        demo.setVisible(true);
-        demo.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-    }
-
-    private Container checkerBoard; // 棋盘
-    private Container msg; // 提示信息
-    private Container Options; // 选项
-    public MButton[][] buttons = new MButton[BoardInfo.ROW][BoardInfo.COL];
-    public JLabel label; // 标签 提示信息
-
     private static String win = "you win!"; // "获胜信息"
+
     private static String lose = "you lose!"; // "失败信息"
 
+    public MButton[][] buttons = new MButton[BoardInfo.ROW][BoardInfo.COL];
+
+    public JLabel label; // 标签 提示信息
+
     public BoardInfo info;
+
     public Client client; // 操纵client数据
 
-    public Client getClient()
-    { return client; }
+    private Container checkerBoard; // 棋盘
 
-    public void setClient(Client client)
-    { this.client = client; }
+    private Container msg; // 提示信息
+
+    private Container Options; // 选项
 
     public MFrame(BoardInfo info) throws HeadlessException
     {
@@ -72,6 +64,25 @@ public class MFrame extends JFrame
             }
         });
     }
+
+    public static void main(String[] args)
+    {
+        MFrame demo = new MFrame(new BoardInfo(Order.FIRST));
+        demo.setVisible(true);
+        demo.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+    }
+
+    public static void paintBtn(Color bgColor, MButton[][] buttons, int x, int y)
+    {
+        MButton button = buttons[x][y];
+        button.setBackground(bgColor);
+    }
+
+    public Client getClient()
+    { return client; }
+
+    public void setClient(Client client)
+    { this.client = client; }
 
     /**
      * @description: makeButton
@@ -116,8 +127,8 @@ public class MFrame extends JFrame
                     info.chessArray[xx][yy] = 1;
                 else if (info.status == Order.SECOND)
                     info.chessArray[xx][yy] = 2;
-                client.msgOnClick = new InfoPerStep(xx, yy);
-//                client.flag = true;
+                // 创建+打印消息对象
+                client.msgOnClick = new InfoPerStep(xx, yy, client.getID());
                 System.out.println(client.msgOnClick);
                 // 3. 判断输赢
                 if (Tool.is_win(info.chessArray, xx, yy, 5, BoardInfo.ROW, BoardInfo.COL))
@@ -128,12 +139,6 @@ public class MFrame extends JFrame
                 }
             }
         });
-    }
-
-    public static void paintBtn(Color bgColor, MButton[][] buttons, int x, int y)
-    {
-        MButton button = buttons[x][y];
-        button.setBackground(bgColor);
     }
 }
 

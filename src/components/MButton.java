@@ -8,14 +8,6 @@ public class MButton extends JButton
     private int x;
     private int y;
 
-    public int get_Y() { return y; }
-
-    public void setY(int y) { this.y = y; }
-
-    public int get_X() { return x; }
-
-    public void setX(int x) { this.x = x; }
-
     public MButton() { }
 
     public MButton(int x, int y)
@@ -23,4 +15,12 @@ public class MButton extends JButton
         this.x = x;
         this.y = y;
     }
+
+    public int get_Y() { return y; }
+
+    public void setY(int y) { this.y = y; }
+
+    public int get_X() { return x; }
+
+    public void setX(int x) { this.x = x; }
 }
